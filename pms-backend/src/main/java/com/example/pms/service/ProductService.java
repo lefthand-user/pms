@@ -4,4 +4,5 @@ import com.example.pms.dto.ProductDto;
 
 public interface ProductService {
     ProductDto createProduct(ProductDto productDto);
+    ProductDto getProductById(Long id);
 }
