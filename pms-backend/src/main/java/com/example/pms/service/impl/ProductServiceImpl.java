@@ -9,6 +9,9 @@ import com.example.pms.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -30,6 +33,39 @@ public class ProductServiceImpl implements ProductService {
 
         return ProductMapper.mapToProductDto(product);
 
+
+    }
+
+    @Override
+    public List<ProductDto> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(ProductMapper::mapToProductDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ProductDto updateProduct(Long id, ProductDto updateedProductDto) {
+        Product product = productRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Product does not exist by the given id: " + id)
+        );
+
+        product.setName(updateedProductDto.getName());
+        product.setDescription(updateedProductDto.getDescription());
+        product.setPrice(updateedProductDto.getPrice());
+
+        Product obj = productRepository.save(product);
+
+        return ProductMapper.mapToProductDto(obj);
+    }
+
+    @Override
+    public void deleteProductByID(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Product does not exist by the given id: " + id)
+        );
+
+        productRepository.deleteById(id);
 
     }
 
